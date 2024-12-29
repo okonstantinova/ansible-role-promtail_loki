@@ -1,0 +1,10 @@
+---
+- name: Converge
+  hosts: all
+  become: no
+  gather_facts: false
+
+  tasks:
+    - name: promtail_loki role
+      include_role:
+        name: promtail_loki

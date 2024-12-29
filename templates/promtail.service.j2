@@ -1,0 +1,13 @@
+[Unit]
+Description=Promtail service
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+ExecStart={{ promtail_install_dir }}/promtail-linux-amd64 -config.file={{ promtail_config_dir }}/{{ promtail_config_file }}
+Restart=on-failure
+User=root
+Group=root
+
+[Install]
+WantedBy=multi-user.target

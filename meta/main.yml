@@ -1,0 +1,15 @@
+galaxy_info:
+  author: Olga Konstantinova
+  description: Promtail_Loki setup role
+  company: ITMO
+  license: BSD
+  min_ansible_version: 2.18
+  platforms:
+    - name: Ubuntu
+      versions:
+        - 20.04
+  galaxy_tags:
+    - promtail_loki
+  role_name: promtail_loki
+  namespace: itmo
+dependencies: []

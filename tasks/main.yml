@@ -1,0 +1,109 @@
+---
+- name: Ensure Python3 is installed
+  apt:
+    name: python3
+    state: present
+    update_cache: yes
+
+- name: Ensure required packages are installed
+  apt:
+    name:
+      - unzip
+    state: present
+    update_cache: yes
+
+# Promtail Tasks
+- name: Download Promtail zip file
+  get_url:
+    url: "{{ promtail_url }}"
+    dest: "/tmp/promtail-linux-amd64.zip"
+    mode: '0644'
+    validate_certs: no
+
+- name: Unzip Promtail
+  unarchive:
+    src: "/tmp/promtail-linux-amd64.zip"
+    dest: "{{ promtail_install_dir }}"
+    remote_src: yes
+
+- name: Ensure Promtail config directory exists
+  file:
+    path: "{{ promtail_config_dir }}"
+    state: directory
+    mode: '0755'
+    owner: root
+    group: root
+
+- name: Copy Promtail configuration file from template
+  template:
+    src: "templates/promtail-local-config.yaml.j2"
+    dest: "{{ promtail_config_dir }}/{{ promtail_config_file }}"
+    mode: '0644'
+    owner: root
+    group: root
+
+- name: Deploy Promtail systemd service file
+  template:
+    src: "templates/promtail.service.j2"
+    dest: "/etc/systemd/system/promtail.service"
+    mode: '0644'
+    owner: root
+    group: root
+
+- name: Reload systemd configuration
+  ansible.builtin.systemd:
+    daemon_reload: yes
+
+- name: Enable and start Promtail service
+  ansible.builtin.systemd:
+    name: promtail
+    state: started
+    enabled: yes
+
+# Loki Tasks
+- name: Download Loki zip file
+  get_url:
+    url: "{{ loki_url }}"
+    dest: "/tmp/loki-linux-amd64.zip"
+    mode: '0644'
+    validate_certs: no
+
+- name: Unzip Loki
+  unarchive:
+    src: "/tmp/loki-linux-amd64.zip"
+    dest: "{{ loki_install_dir }}"
+    remote_src: yes
+
+- name: Ensure Loki config directory exists
+  file:
+    path: "{{ loki_config_dir }}"
+    state: directory
+    mode: '0755'
+    owner: root
+    group: root
+
+- name: Copy Loki configuration file from template
+  template:
+    src: "templates/loki-local-config.yaml.j2"
+    dest: "{{ loki_config_dir }}/{{ loki_config_file }}"
+    mode: '0644'
+    owner: root
+    group: root
+
+- name: Deploy Loki systemd service file
+  template:
+    src: "templates/loki.service.j2"
+    dest: "/etc/systemd/system/loki.service"
+    mode: '0644'
+    owner: root
+    group: root
+
+- name: Reload systemd configuration
+  ansible.builtin.systemd:
+    daemon_reload: yes
+
+- name: Enable and start Loki service
+  ansible.builtin.systemd:
+    name: loki
+    state: started
+    enabled: yes

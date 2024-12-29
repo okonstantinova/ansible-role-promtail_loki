@@ -1,0 +1,13 @@
+[Unit]
+Description=Loki service
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+ExecStart={{ loki_install_dir }}/loki-linux-amd64 -config.file={{ loki_config_dir }}/{{ loki_config_file }}
+Restart=on-failure
+User=root
+Group=root
+
+[Install]
+WantedBy=multi-user.target
